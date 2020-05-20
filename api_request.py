@@ -3,19 +3,15 @@ import pandas as pd
 import time
 import datetime
 
+from loguru import logger
 from influxdb import DataFrameClient
-
-INFLUX_HOST = "influxdb"
 
 
 def process_data(data):
 
     data = data.set_index("data")
-
     data.index = pd.to_datetime(data.index, dayfirst=True)
     data = data.sort_index()
-
-    data = data
 
     confirmados = data[[col for col in data.columns if "confirmados" in col]].astype(
         float
@@ -61,137 +57,170 @@ def process_data(data):
     return confirmados, recuperados, obitos, sintomas, geral
 
 
-def ingest_data(confirmados, recuperados, obitos, sintomas, geral):
+def ingest_data(confirmados, recuperados, obitos, sintomas, geral, influx_client):
 
-    influx_cli = DataFrameClient(host=INFLUX_HOST, database="covid_api")
+    logger.info("A ingerir dados para a tabela confirmados...")
+    response = influx_client.write_points(confirmados, "confirmados")
+    logger.info(f"Resposta {response}")
 
-    print("A ingerir dados para a tabela confirmados...")
-    response = influx_cli.write_points(confirmados, "confirmados", database="covid_api")
-    print(f"Resposta {response}")
+    logger.info("A ingerir dados para a tabela obitos...")
+    response = influx_client.write_points(obitos, "obitos")
+    logger.info(f"Resposta {response}")
 
-    print("A ingerir dados para a tabela obitos...")
-    response = influx_cli.write_points(obitos, "obitos", database="covid_api")
-    print(f"Resposta {response}")
+    logger.info("A ingerir dados para a tabela recuperados...")
+    response = influx_client.write_points(recuperados, "recuperados")
+    logger.info(f"Resposta {response}")
 
-    print("A ingerir dados para a tabela recuperados...")
-    response = influx_cli.write_points(recuperados, "recuperados", database="covid_api")
-    print(f"Resposta {response}")
+    logger.info("A ingerir dados para a tabela sintomas...")
+    response = influx_client.write_points(sintomas, "sintomas")
+    logger.info(f"Resposta {response}")
 
-    print("A ingerir dados para a tabela sintomas...")
-    response = influx_cli.write_points(sintomas, "sintomas", database="covid_api")
-    print(f"Resposta {response}")
-
-    print("A ingerir dados para a tabela geral...")
-    response = influx_cli.write_points(geral, "geral", database="covid_api")
-    print(f"Resposta {response}")
-
-    influx_cli.close()
+    logger.info("A ingerir dados para a tabela geral...")
 
 
-def check_db():
-    influx_cli = DataFrameClient(host=INFLUX_HOST, database="covid_api")
-    try:
-        influx_cli.get_list_measurements()
-    except Exception as e:
-        influx_cli.create_database("covid_api")
+def request_per_date(date, influx_client):
+    request_url = f"https://covid19-api.vost.pt/Requests/get_entry/{date}"
+
+    logger.info(f"Getting data for {date}")
+    logger.info(f"Request URL - {request_url}")
+
+    request = requests.get(request_url)
+
+    request_status_code = request.status_code
+
+    logger.info(f"Request status code {request_status_code}")
+
+    if request_status_code == 200:
+        data = pd.DataFrame.from_dict(request.json())
+        confirmados, recuperados, obitos, sintomas, geral = process_data(data)
+        ingest_data(confirmados, recuperados, obitos, sintomas, geral, influx_client)
+
+    if request_status_code == 500:
+        logger.info(
+            "Current day does not exist yet. Data is already in its latest state."
+        )
 
 
-def check_db_data():
-    influx_cli = DataFrameClient(host=INFLUX_HOST, database="covid_api")
+def request_full_dataset(influx_client):
+    request_url = "https://covid19-api.vost.pt/Requests/get_full_dataset"
 
-    measurements = influx_cli.get_list_measurements()
+    logger.info("Getting full dataset")
+    logger.info(f"Request URL - {request_url}")
 
+    request = requests.get(request_url)
+
+    request_status_code = request.status_code
+
+    logger.info(f"Request status code {request_status_code}")
+
+    if request_status_code == 200:
+        data = pd.DataFrame.from_dict(request.json())
+        confirmados, recuperados, obitos, sintomas, geral = process_data(data)
+        ingest_data(confirmados, recuperados, obitos, sintomas, geral, influx_client)
+
+
+def request_last_entry(influx_client):
+    request_url = "https://covid19-api.vost.pt/Requests/get_last_update"
+
+    logger.info(f"Getting data for {date}")
+    logger.info(f"Request URL - {request_url}")
+
+    response = requests.get(request_url)
+
+    request_status_code = request.status_code
+
+    logger.info(f"Request status code {request_status_code}")
+
+    if request_status_code == 200:
+        data = pd.DataFrame.from_dict(request.json(), orient="index").T
+        confirmados, recuperados, obitos, sintomas, geral = process_data(data)
+        ingest_data(confirmados, recuperados, obitos, sintomas, geral, influx_client)
+
+    if request_status_code == 500:
+        logger.info(
+            "Current day does not exist yet. Data is already in its latest state."
+        )
+
+
+def check_measurements(influx_client):
+    measurements = influx_client.get_list_measurements()
+
+    # ToDo: change this to check all measurements name
     if len(measurements) > 1:
-        print("Data already present. Checking where to resume!")
-        last_entry_db = influx_cli.query(
-            "SELECT * FROM confirmados ORDER BY time DESC LIMIT 1"
-        )["confirmados"].index
+        return True
+    else:
+        return False
+
+
+def get_last_entry_db(influx_client):
+    last_entry_db = influx_client.query(
+        "SELECT * FROM confirmados ORDER BY time DESC LIMIT 1"
+    )["confirmados"].index
+
+    return pd.Timestamp(last_entry_db.values[0])
+
+
+def check_db(influx_client):
+    dbs = influx_client.get_list_database()
+    if influx_client._database not in dbs:
+        logger.info("Creating database...")
+        influx_client.create_database(influx_client._database)
+    else:
+        logger.info("Database already created. Skiping...")
+        pass
+
+
+def check_and_update(influx_client):
+
+    if check_measurements(influx_client):
+        logger.info("Data already present. Checking where to resume!")
+        last_entry_db = get_last_entry_db(influx_client)
+        logger.info(f"Last date present in database - {last_entry_db}")
 
         current_day = datetime.datetime.today()
 
-        if pd.Timestamp(last_entry_db.values[0]) < current_day:
-            for date in pd.date_range(
-                pd.Timestamp(last_entry_db.values[0]), current_day
-            ):
+        if last_entry_db < current_day:
+            for date in pd.date_range(last_entry_db, current_day):
                 date = date.strftime("%d-%m-%Y")
-                try:
-                    print(f"Fetching data for {date}")
-                    response = requests.get(
-                        f"https://covid19-api.vost.pt/Requests/get_entry/{date}"
-                    )
-                    if response.status_code == 500:
-                        print("Data is updated. Proceeding...")
-                    elif response.status_code == 200:
-                        json = response.json()
-                        data = pd.DataFrame.from_dict(json)
-                        (
-                            confirmados,
-                            recuperados,
-                            obitos,
-                            sintomas,
-                            geral,
-                        ) = process_data(data)
-                        ingest_data(confirmados, recuperados, obitos, sintomas, geral)
-                    else:
-                        raise RuntimeError
-                except Exception as e:
-                    print(e)
+                request_per_date(date, influx_client)
     else:
-        data = pd.DataFrame.from_dict(
-            requests.get(
-                "https://covid19-api.vost.pt/Requests/get_full_dataset"
-            ).json(),
-        )
-
-        confirmados, recuperados, obitos, sintomas, geral = process_data(data)
-        ingest_data(confirmados, recuperados, obitos, sintomas, geral)
+        logger.info("Database is empty. Going to populate it")
+        request_full_dataset(influx_client)
 
 
-def query_api():
-    influx_cli = DataFrameClient(host=INFLUX_HOST, database="covid_api")
+def get_last_update(influx_client):
+
+    logger.info("Data already present. Checking where to resume!")
+    last_entry_db = get_last_entry_db(influx_client).strftime("%d-%m-%Y")
+    current_day = datetime.datetime.today().strftime("%d-%m-%Y")
+    logger.info(f"Last date present in database - {last_entry_db}")
+
+    if last_entry_db == current_day:
+        logger.info("Data is updated!")
+        return True
 
     while True:
-        last_entry_db = influx_cli.query(
-            "SELECT * FROM confirmados ORDER BY time DESC LIMIT 1"
-        )["confirmados"].index
+        logger.info(current_day)
+        logger.info(last_entry_db)
 
-        try:
-            response = requests.get(
-                "https://covid19-api.vost.pt/Requests/get_last_update"
-            )
-            if response.status_code == 500:
-                print(response.json())
-            elif response.status_code == 200:
-                json = response.json()
-                data = pd.DataFrame.from_dict(json, orient="index",).T
-                print("Checking if data is already updated!")
-                timestamp = pd.Timestamp(
-                    pd.to_datetime(data.data, dayfirst=True, utc=True).values[0]
-                ).strftime("%d-%m-%Y")
-                if (last_entry_db < pd.to_datetime(data.data, dayfirst=True, utc=True))[
-                    0
-                ]:
-                    print(f"Data updated for day {timestamp}")
-                    print("updating data with new cases.!!!!!")
-                    (confirmados, recuperados, obitos, sintomas, geral,) = process_data(
-                        data
-                    )
+        request_per_date(current_day, influx_client)
+        # todo: only read this when gets updated
+        last_entry_db = get_last_entry_db(influx_client)
 
-                    ingest_data(confirmados, recuperados, obitos, sintomas, geral)
-                else:
-                    print("Data is already updated!")
-                    print("Going to sleep for 60 sec!")
-                    time.sleep(60)
-
-            else:
-                raise RuntimeError
-        except Exception as e:
-            print(e)
+        if last_entry_db == current_day:
+            return True
 
 
 if __name__ == "__main__":
 
-    check_db()
-    check_db_data()
+    INFLUX_HOST = "influxdb"
+    INFLUX_DATABASE = "covid_api"
+
+    influx_client = DataFrameClient(INFLUX_HOST, database=INFLUX_DATABASE)
+
+    check_db(influx_client)
+    check_and_update(influx_client)
     while True:
-        query_api()
+        get_last_update(influx_client)
+        logger.info("Trying again in 60 seconds!")
+        time.sleep(60)

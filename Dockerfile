@@ -1,6 +1,6 @@
 FROM python:3.8-slim
 
-RUN pip install requests pandas influxdb
+RUN pip install requests pandas influxdb loguru
 
 ADD api_request.py /
 ADD wait-for-it.sh /
