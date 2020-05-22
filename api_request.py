@@ -76,6 +76,8 @@ def ingest_data(confirmados, recuperados, obitos, sintomas, geral, influx_client
     logger.info(f"Resposta {response}")
 
     logger.info("A ingerir dados para a tabela geral...")
+    response = influx_client.write_points(geral, "geral")
+    logger.info(f"Resposta {response}")
 
 
 def request_per_date(date, influx_client):
@@ -162,6 +164,8 @@ def get_last_entry_db(influx_client):
 
 def check_db(influx_client):
     dbs = influx_client.get_list_database()
+    dbs = [db for position in dbs for name, db in position.items()]
+    logger.info(dbs)
     if influx_client._database not in dbs:
         logger.info("Creating database...")
         influx_client.create_database(influx_client._database)
@@ -174,10 +178,10 @@ def check_and_update(influx_client):
 
     if check_measurements(influx_client):
         logger.info("Data already present. Checking where to resume!")
-        last_entry_db = get_last_entry_db(influx_client)
+        last_entry_db = get_last_entry_db(influx_client).date()
         logger.info(f"Last date present in database - {last_entry_db}")
 
-        current_day = datetime.datetime.today()
+        current_day = datetime.datetime.today().date()
 
         if last_entry_db < current_day:
             for date in pd.date_range(last_entry_db, current_day):
@@ -194,7 +198,8 @@ def get_last_update(influx_client):
     last_entry_db = get_last_entry_db(influx_client).strftime("%d-%m-%Y")
     current_day = datetime.datetime.today().strftime("%d-%m-%Y")
     logger.info(f"Last date present in database - {last_entry_db}")
-
+    logger.info(current_day)
+    logger.info(last_entry_db)
     if last_entry_db == current_day:
         logger.info("Data is updated!")
         return True
@@ -205,10 +210,14 @@ def get_last_update(influx_client):
 
         request_per_date(current_day, influx_client)
         # todo: only read this when gets updated
-        last_entry_db = get_last_entry_db(influx_client)
+        last_entry_db = get_last_entry_db(influx_client).strftime("%d-%m-%Y")
+        current_day = datetime.datetime.today().strftime("%d-%m-%Y")
 
         if last_entry_db == current_day:
             return True
+        else:
+            logger.info("Data is not available in the API. Retrying in 60 seconds!")
+            time.sleep(60)
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
     depends_on:
@@ -21,10 +21,10 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-  scrapper:
-    image: api_request
-    depends_on:
-      - influxdb
+#  scrapper:
+#    image: api_request
+#    depends_on:
+#      - influxdb
 volumes:
   influxdb-storage: 
   grafana-storage: 
