@@ -1,0 +1,124 @@
+2020-05-22 20:17:56,068 INFO RPC interface 'supervisor' initialized
+2020-05-22 20:17:56,068 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+2020-05-22 20:17:56,070 INFO daemonizing the supervisord process
+2020-05-22 20:17:56,071 INFO supervisord started with pid 6481
+2020-05-22 20:17:57,074 INFO spawned: 'prefect-agent' with pid 6506
+2020-05-22 20:17:57,638 DEBG 'prefect-agent' stdout output:
+
+ ____            __           _        _                    _
+|  _ \ _ __ ___ / _| ___  ___| |_     / \   __ _  ___ _ __ | |_
+| |_) | '__/ _ \ |_ / _ \/ __| __|   / _ \ / _` |/ _ \ '_ \| __|
+|  __/| | |  __/  _|  __/ (__| |_   / ___ \ (_| |  __/ | | | |_
+|_|   |_|  \___|_|  \___|\___|\__| /_/   \_\__, |\___|_| |_|\__|
+                                           |___/
+
+[2020-05-22 19:17:57,638] INFO - agent | Starting LocalAgent with labels ['jaguar', 'azure-flow-storage', 'gcs-flow-storage', 's3-flow-storage']
+[2020-05-22 19:17:57,638] INFO - agent | Agent documentation can be found at https://docs.prefect.io/orchestration/
+
+2020-05-22 20:17:57,638 DEBG 'prefect-agent' stdout output:
+[2020-05-22 19:17:57,638] INFO - agent | Agent connecting to the Prefect API at http://localhost:4200
+
+2020-05-22 20:17:57,712 DEBG 'prefect-agent' stdout output:
+[2020-05-22 19:17:57,712] INFO - agent | Waiting for flow runs...
+
+2020-05-22 20:17:58,008 DEBG 'prefect-agent' stdout output:
+[2020-05-22 19:17:58,008] INFO - agent | Found 1 flow run(s) to submit for execution.
+
+2020-05-22 20:17:58,047 DEBG 'prefect-agent' stdout output:
+[2020-05-22 19:17:58,046] INFO - agent | Deploying flow run 97993d45-c24d-4453-9a6c-0663783fb200
+
+2020-05-22 20:17:59,048 INFO success: prefect-agent entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2020-05-22 20:21:30,746 DEBG killing prefect-agent (pid 6506) with signal SIGTERM
+2020-05-22 20:21:30,746 INFO waiting for prefect-agent to stop
+2020-05-22 20:21:30,749 DEBG fd 8 closed, stopped monitoring <POutputDispatcher at 140677162242384 for <Subprocess at 140677162024400 with name prefect-agent in state STOPPING> (stdout)>
+2020-05-22 20:21:30,749 DEBG fd 10 closed, stopped monitoring <POutputDispatcher at 140677161776592 for <Subprocess at 140677162024400 with name prefect-agent in state STOPPING> (stderr)>
+2020-05-22 20:21:30,749 INFO stopped: prefect-agent (terminated by SIGTERM)
+2020-05-22 20:21:30,749 DEBG received SIGCHLD indicating a child quit
+2020-05-22 20:22:54,238 INFO spawned: 'prefect-agent' with pid 8116
+2020-05-22 20:22:54,742 DEBG 'prefect-agent' stdout output:
+
+ ____            __           _        _                    _
+|  _ \ _ __ ___ / _| ___  ___| |_     / \   __ _  ___ _ __ | |_
+| |_) | '__/ _ \ |_ / _ \/ __| __|   / _ \ / _` |/ _ \ '_ \| __|
+|  __/| | |  __/  _|  __/ (__| |_   / ___ \ (_| |  __/ | | | |_
+|_|   |_|  \___|_|  \___|\___|\__| /_/   \_\__, |\___|_| |_|\__|
+                                           |___/
+
+[2020-05-22 19:22:54,742] INFO - agent | Starting LocalAgent with labels ['jaguar', 'azure-flow-storage', 'gcs-flow-storage', 's3-flow-storage']
+
+2020-05-22 20:22:54,742 DEBG 'prefect-agent' stdout output:
+[2020-05-22 19:22:54,742] INFO - agent | Agent documentation can be found at https://docs.prefect.io/orchestration/
+[2020-05-22 19:22:54,742] INFO - agent | Agent connecting to the Prefect API at http://localhost:4200
+
+2020-05-22 20:22:54,789 DEBG 'prefect-agent' stdout output:
+[2020-05-22 19:22:54,788] INFO - agent | Waiting for flow runs...
+
+2020-05-22 20:22:55,108 DEBG 'prefect-agent' stdout output:
+[2020-05-22 19:22:55,108] INFO - agent | Found 1 flow run(s) to submit for execution.
+
+2020-05-22 20:22:55,156 DEBG 'prefect-agent' stdout output:
+[2020-05-22 19:22:55,155] INFO - agent | Deploying flow run 5ccf8aaf-9020-401d-b298-b75edc6ca498
+
+2020-05-22 20:22:56,157 INFO success: prefect-agent entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2020-05-23 13:01:22,138 DEBG 'prefect-agent' stdout output:
+[2020-05-23 12:01:22,138] INFO - agent | Found 1 flow run(s) to submit for execution.
+
+2020-05-23 13:01:22,171 DEBG 'prefect-agent' stdout output:
+[2020-05-23 12:01:22,171] INFO - agent | Deploying flow run 210e4e52-a968-4e6c-b7eb-aebf9326fc78
+
+2020-05-23 13:02:53,117 DEBG killing prefect-agent (pid 8116) with signal SIGTERM
+2020-05-23 13:02:53,117 INFO waiting for prefect-agent to stop
+2020-05-23 13:02:53,120 DEBG fd 9 closed, stopped monitoring <POutputDispatcher at 140677162242576 for <Subprocess at 140677162024400 with name prefect-agent in state STOPPING> (stdout)>
+2020-05-23 13:02:53,120 DEBG fd 11 closed, stopped monitoring <POutputDispatcher at 140677161775632 for <Subprocess at 140677162024400 with name prefect-agent in state STOPPING> (stderr)>
+2020-05-23 13:02:53,120 INFO stopped: prefect-agent (terminated by SIGTERM)
+2020-05-23 13:02:53,120 DEBG received SIGCHLD indicating a child quit
+2020-05-23 13:03:10,804 INFO spawned: 'prefect-agent' with pid 35802
+2020-05-23 13:03:11,302 DEBG 'prefect-agent' stdout output:
+
+ ____            __           _        _                    _
+|  _ \ _ __ ___ / _| ___  ___| |_     / \   __ _  ___ _ __ | |_
+| |_) | '__/ _ \ |_ / _ \/ __| __|   / _ \ / _` |/ _ \ '_ \| __|
+|  __/| | |  __/  _|  __/ (__| |_   / ___ \ (_| |  __/ | | | |_
+|_|   |_|  \___|_|  \___|\___|\__| /_/   \_\__, |\___|_| |_|\__|
+                                           |___/
+
+[2020-05-23 12:03:11,302] INFO - agent | Starting LocalAgent with labels ['jaguar', 'azure-flow-storage', 'gcs-flow-storage', 's3-flow-storage']
+[2020-05-23 12:03:11,302] INFO - agent | Agent documentation can be found at https://docs.prefect.io/orchestration/
+
+2020-05-23 13:03:11,302 DEBG 'prefect-agent' stdout output:
+[2020-05-23 12:03:11,302] INFO - agent | Agent connecting to the Prefect API at http://localhost:4200
+
+2020-05-23 13:03:11,348 DEBG 'prefect-agent' stdout output:
+[2020-05-23 12:03:11,348] INFO - agent | Waiting for flow runs...
+
+2020-05-23 13:03:11,692 DEBG 'prefect-agent' stdout output:
+[2020-05-23 12:03:11,692] INFO - agent | Found 1 flow run(s) to submit for execution.
+
+2020-05-23 13:03:11,749 DEBG 'prefect-agent' stdout output:
+[2020-05-23 12:03:11,748] INFO - agent | Deploying flow run 4ab85c52-4508-4d1d-929d-d5d16d23b9d9
+
+2020-05-23 13:03:12,751 INFO success: prefect-agent entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2020-05-23 13:03:58,006 DEBG 'prefect-agent' stdout output:
+[2020-05-23 12:03:58,005] INFO - agent | Found 1 flow run(s) to submit for execution.
+
+2020-05-23 13:03:58,047 DEBG 'prefect-agent' stdout output:
+[2020-05-23 12:03:58,046] INFO - agent | Deploying flow run 434b29e8-bfd6-40df-b545-fe400153478b
+
+2020-05-23 14:00:00,363 DEBG 'prefect-agent' stdout output:
+[2020-05-23 13:00:00,363] INFO - agent | Found 1 flow run(s) to submit for execution.
+
+2020-05-23 14:00:00,397 DEBG 'prefect-agent' stdout output:
+[2020-05-23 13:00:00,397] INFO - agent | Deploying flow run 114f9a06-49f4-4fff-89ca-6a6459f1e25a
+
+2020-05-24 14:00:05,215 DEBG 'prefect-agent' stdout output:
+[2020-05-24 13:00:05,214] INFO - agent | Found 1 flow run(s) to submit for execution.
+
+2020-05-24 14:00:05,287 DEBG 'prefect-agent' stdout output:
+[2020-05-24 13:00:05,286] INFO - agent | Deploying flow run 9837182b-5c4c-4da4-b583-404ea03f6165
+
+2020-05-25 14:00:01,036 DEBG 'prefect-agent' stdout output:
+[2020-05-25 13:00:01,036] INFO - agent | Found 1 flow run(s) to submit for execution.
+
+2020-05-25 14:00:01,088 DEBG 'prefect-agent' stdout output:
+[2020-05-25 13:00:01,088] INFO - agent | Deploying flow run fb63e826-53e6-4755-b4d4-75945db9374d
+

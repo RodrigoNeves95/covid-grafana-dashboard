@@ -1,3 +1,5 @@
+supervisor.*
+
 .env
 .vscode/
 
