@@ -122,3 +122,9 @@
 2020-05-25 14:00:01,088 DEBG 'prefect-agent' stdout output:
 [2020-05-25 13:00:01,088] INFO - agent | Deploying flow run fb63e826-53e6-4755-b4d4-75945db9374d
 
+2020-05-26 14:00:04,480 DEBG 'prefect-agent' stdout output:
+[2020-05-26 13:00:04,479] INFO - agent | Found 1 flow run(s) to submit for execution.
+
+2020-05-26 14:00:04,536 DEBG 'prefect-agent' stdout output:
+[2020-05-26 13:00:04,536] INFO - agent | Deploying flow run 67e7515f-50f6-460b-8a49-aeccf05e873c
+
