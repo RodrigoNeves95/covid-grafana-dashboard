@@ -1,0 +1,14 @@
+# config file version
+apiVersion: 1
+
+deleteDatasources:
+
+
+datasources:
+  - name: covid_api 
+    type: influxdb
+    access: proxy
+    database: covid_api 
+    url: http://influxdb:8086
+    isDefault: True
+    editable: true

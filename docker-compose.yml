@@ -3,9 +3,10 @@ services:
   influxdb:
     image: influxdb:latest
     ports:
-      - "8086:8086"
+      - "8087:8086"
     volumes:
       - influxdb-storage:/var/lib/influxdb
+      - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf
     environment:
       - INFLUXDB_DB=db0
       - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME}
@@ -13,18 +14,20 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3001:3000"
+      - "3002:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning
+      - ./grafana/config.ini:/etc/grafana/config.ini
     depends_on:
       - influxdb
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-#  scrapper:
-#    image: api_request
-#    depends_on:
-#      - influxdb
+  scrapper:
+    image: api_request
+    depends_on:
+      - influxdb
 volumes:
   influxdb-storage: 
   grafana-storage: 
