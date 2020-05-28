@@ -1,4 +1,5 @@
 supervisor*
+supervisord.log
 
 .env
 .vscode/
