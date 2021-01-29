@@ -8,3 +8,5 @@ supervisord.log
 .ipynb_checkpoints
 
 __pycache__
+
+tags

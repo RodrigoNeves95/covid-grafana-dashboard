@@ -222,7 +222,7 @@ def get_last_update(influx_client):
 
 if __name__ == "__main__":
 
-    INFLUX_HOST = "influxdb"
+    INFLUX_HOST = "localhost"
     INFLUX_DATABASE = "covid_api"
 
     influx_client = DataFrameClient(INFLUX_HOST, database=INFLUX_DATABASE)
